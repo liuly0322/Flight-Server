@@ -2,29 +2,26 @@
  * @Author       : mark
  * @Date         : 2020-06-25
  * @copyleft Apache 2.0
- */ 
+ */
 #ifndef HTTP_REQUEST_H
 #define HTTP_REQUEST_H
 
+#include <errno.h>
+#include <regex>
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
-#include <string>
-#include <regex>
-#include <errno.h>     
-#include <mysql/mysql.h>  //mysql
 
 #include "../buffer/buffer.h"
 #include "../log/log.h"
-#include "../pool/sqlconnpool.h"
-#include "../pool/sqlconnRAII.h"
 
 class HttpRequest {
-public:
+   public:
     enum PARSE_STATE {
         REQUEST_LINE,
         HEADERS,
         BODY,
-        FINISH,        
+        FINISH,
     };
 
     enum HTTP_CODE {
@@ -37,7 +34,7 @@ public:
         INTERNAL_ERROR,
         CLOSED_CONNECTION,
     };
-    
+
     HttpRequest() { Init(); }
     ~HttpRequest() = default;
 
@@ -53,13 +50,13 @@ public:
 
     bool IsKeepAlive() const;
 
-    /* 
-    todo 
+    /*
+    todo
     void HttpConn::ParseFormData() {}
     void HttpConn::ParseJson() {}
     */
 
-private:
+   private:
     bool ParseRequestLine_(const std::string& line);
     void ParseHeader_(const std::string& line);
     void ParseBody_(const std::string& line);
@@ -68,7 +65,9 @@ private:
     void ParsePost_();
     void ParseFromUrlencoded_();
 
-    static bool UserVerify(const std::string& name, const std::string& pwd, bool isLogin);
+    static bool UserVerify(const std::string& name,
+                           const std::string& pwd,
+                           bool isLogin);
 
     PARSE_STATE state_;
     std::string method_, path_, version_, body_;
@@ -80,5 +79,4 @@ private:
     static int ConverHex(char ch);
 };
 
-
-#endif //HTTP_REQUEST_H
+#endif  // HTTP_REQUEST_H
