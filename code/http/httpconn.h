@@ -12,9 +12,11 @@
 #include <stdlib.h>  // atoi()
 #include <sys/types.h>
 #include <sys/uio.h>  // readv/writev
+#include <mutex>
 
 #include "../buffer/buffer.h"
 #include "../log/log.h"
+#include "../ticket/ticket.h"
 #include "httprequest.h"
 #include "httpresponse.h"
 
@@ -49,6 +51,9 @@ class HttpConn {
     static bool isET;
     static const char* srcDir;
     static std::atomic<int> userCount;
+
+    static std::mutex mtx;
+    static Ticket ticket;
 
    private:
     int fd_;

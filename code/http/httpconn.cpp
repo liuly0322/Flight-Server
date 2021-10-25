@@ -10,6 +10,9 @@ const char* HttpConn::srcDir;
 std::atomic<int> HttpConn::userCount;
 bool HttpConn::isET;
 
+std::mutex HttpConn::mtx;
+Ticket HttpConn::ticket;
+
 HttpConn::HttpConn() {
     fd_ = -1;
     addr_ = {0};
