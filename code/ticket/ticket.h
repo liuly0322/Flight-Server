@@ -18,6 +18,7 @@ class Ticket {
     ~Ticket();
 
     bool Login(string& user, string& pass);  // 返回是否登陆成功
+    bool Regi(string& user, string& pass);  // 失败可能是用户名占用等
 
     void query();
 };

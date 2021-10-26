@@ -58,4 +58,20 @@ bool Ticket::Login(string& user, string& pass) {
     return false;
 }
 
+bool Ticket::Regi(string& user, string& pass) {
+    // 需要遍历 users 链表，判断用户名是否重复
+    for (auto p = users->next; p; p = p->next) {
+        if (p->username == user) {
+            return false;
+        }
+    }
+    // 接下来需要将该用户存入用户链表中
+    auto p = new Passenger();
+    p->username = user;
+    p->password = pass;
+    p->next = users->next;
+    users->next = p;
+    return true;
+}
+
 void Ticket::query() {}

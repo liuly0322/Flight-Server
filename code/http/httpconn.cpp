@@ -113,13 +113,22 @@ bool HttpConn::process() {
             // Your codes goes here.
             // What you should do is to query what is request
             // and write it to res
-
-            std::string username = request_.Get("username");
-            std::string password = request_.Get("password");
-            if (ticket.Login(username, password)) {
-                res += "登录成功";
-            } else {
-                res += "登录失败";
+            if (request_.method() == "GET") {  // GET 请求，可能是想登录等
+                std::string username = request_.Get("username");
+                std::string password = request_.Get("password");
+                if (ticket.Login(username, password)) {
+                    res = "登录成功";
+                } else {
+                    res = "登录失败";
+                }
+            } else {  // POST 请求，可能是想注册
+                std::string username = request_.GetPost("username");
+                std::string password = request_.GetPost("password");
+                if (ticket.Regi(username, password)) {
+                    res = "注册成功";
+                } else {
+                    res = "注册失败";
+                }
             }
 
             // Your codes ends here.
