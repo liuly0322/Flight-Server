@@ -109,10 +109,18 @@ bool HttpConn::process() {
         LOG_DEBUG("%s", request_.path().c_str());
         if (request_.method() == "POST" ||
             request_.method() == "GET" && !request_.GetEmpty()) {
-            std::string res = request_.Get("username");
+            std::string res;
             // Your codes goes here.
             // What you should do is to query what is request
             // and write it to res
+
+            std::string username = request_.Get("username");
+            std::string password = request_.Get("password");
+            if (ticket.Login(username, password)) {
+                res += "登录成功";
+            } else {
+                res += "登录失败";
+            }
 
             // Your codes ends here.
             response_.Init(srcDir, request_.path(), request_.IsKeepAlive(),
