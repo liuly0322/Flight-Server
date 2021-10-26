@@ -45,6 +45,9 @@ class HttpRequest {
     std::string& path();
     std::string method() const;
     std::string version() const;
+    std::string Get(const std::string& key) const;
+    std::string Get(const char* key) const;
+    bool GetEmpty() const;  // 返回是否有Get参数
     std::string GetPost(const std::string& key) const;
     std::string GetPost(const char* key) const;
 
@@ -73,6 +76,7 @@ class HttpRequest {
     std::string method_, path_, version_, body_;
     std::unordered_map<std::string, std::string> header_;
     std::unordered_map<std::string, std::string> post_;
+    std::unordered_map<std::string, std::string> get_;
 
     static const std::unordered_set<std::string> DEFAULT_HTML;
     static const std::unordered_map<std::string, int> DEFAULT_HTML_TAG;

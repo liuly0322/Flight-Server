@@ -20,6 +20,7 @@ void HttpRequest::Init() {
     state_ = REQUEST_LINE;
     header_.clear();
     post_.clear();
+    get_.clear();
 }
 
 bool HttpRequest::IsKeepAlive() const {
@@ -77,6 +78,17 @@ void HttpRequest::ParsePath_() {
                 path_ += ".html";
                 break;
             }
+        }
+    }
+    // 接下来对 path_ 进行解析
+    if (path_.find('?') != string::npos) {  // 可能有 GET 请求
+        regex pattern("([^?&]+)=([^&]+)");
+        smatch subMatch;
+        string::const_iterator iterStart = path_.begin();
+        string::const_iterator iterEnd = path_.end();
+        while (regex_search(iterStart, iterEnd, subMatch, pattern)) {
+            get_[subMatch[1]] = subMatch[2];
+            iterStart = subMatch[0].second;  //更新搜索起始位置,搜索剩下的字符串
         }
     }
 }
@@ -182,6 +194,26 @@ std::string HttpRequest::method() const {
 
 std::string HttpRequest::version() const {
     return version_;
+}
+
+bool HttpRequest::GetEmpty() const {
+    return get_.empty();
+}
+
+std::string HttpRequest::Get(const std::string& key) const {
+    assert(key != "");
+    if (get_.count(key) == 1) {
+        return get_.find(key)->second;
+    }
+    return "";
+}
+
+std::string HttpRequest::Get(const char* key) const {
+    assert(key != nullptr);
+    if (get_.count(key) == 1) {
+        return get_.find(key)->second;
+    }
+    return "";
 }
 
 std::string HttpRequest::GetPost(const std::string& key) const {

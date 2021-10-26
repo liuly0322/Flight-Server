@@ -107,8 +107,9 @@ bool HttpConn::process() {
         return false;
     } else if (request_.parse(readBuff_)) {
         LOG_DEBUG("%s", request_.path().c_str());
-        if (request_.method() == "POST") {
-            std::string res;
+        if (request_.method() == "POST" ||
+            request_.method() == "GET" && !request_.GetEmpty()) {
+            std::string res = request_.Get("username");
             // Your codes goes here.
             // What you should do is to query what is request
             // and write it to res
