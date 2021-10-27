@@ -39,8 +39,21 @@ class Flight {
     Flight(std::ifstream& in);
     ~Flight();
 
-    void InitOrderList(string s);
-    void InitWaitingList(string s);
+    void save(std::ofstream& out);
+    void SaveOrderList();
+    void SaveWaitingList();
+
+    void InitOrderList();
+    void InitWaitingList();
+
+    // 订票
+    bool Book(string& user, int grade, int num);
+
+    // 查询
+    string MyBook(string& user);
+
+    string& GetDestination();
+    string show();
 };
 
 #endif

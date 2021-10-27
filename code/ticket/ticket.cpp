@@ -44,9 +44,7 @@ Ticket::Ticket() {
     FlightsInit();
 }
 
-Ticket::~Ticket() {
-    // 析构，需要将一切写回到文件里
-}
+Ticket::~Ticket() {}
 
 bool Ticket::Login(string& user, string& pass) {
     // 需要遍历 users 链表
@@ -56,6 +54,32 @@ bool Ticket::Login(string& user, string& pass) {
         }
     }
     return false;
+}
+
+void Ticket::Save() {  // 保存
+    // 分别需要保存 users.txt, flights.txt和调用flight函数保存每个flight信息
+    UsersSave();
+    FlightsSave();
+}
+
+void Ticket::UsersSave() {
+    ofstream out("./resources/users.txt");
+    if (out.is_open()) {
+        for (auto p = users->next; p; p = p->next) {
+            out << p->username << ' ' << p->password << '\n';
+        }
+        out.close();
+    }
+}
+
+void Ticket::FlightsSave() {
+    ofstream out("./resources/flights.txt");
+    if (out.is_open()) {
+        for (auto p = flights->next; p; p = p->next) {
+            p->save(out);
+        }
+        out.close();
+    }
 }
 
 bool Ticket::Regi(string& user, string& pass) {
@@ -74,4 +98,13 @@ bool Ticket::Regi(string& user, string& pass) {
     return true;
 }
 
-void Ticket::query() {}
+string Ticket::query(string& city) {
+    // 输入城市，查询所有符合要求的航班
+    string res;
+    for (auto p = flights->next; p; p = p->next) {
+        if (p->GetDestination() == city) {
+            res += p->show();
+        }
+    }
+    return res;
+}

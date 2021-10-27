@@ -80,16 +80,10 @@ void HttpRequest::ParsePath_() {
             }
         }
     }
-    // 接下来对 path_ 进行解析
-    if (path_.find('?') != string::npos) {  // 可能有 GET 请求
-        regex pattern("([^?&]+)=([^&]+)");
-        smatch subMatch;
-        string::const_iterator iterStart = path_.begin();
-        string::const_iterator iterEnd = path_.end();
-        while (regex_search(iterStart, iterEnd, subMatch, pattern)) {
-            get_[subMatch[1]] = subMatch[2];
-            iterStart = subMatch[0].second;  //更新搜索起始位置,搜索剩下的字符串
-        }
+    if (path_.find('?') != string::npos) {
+        int index = path_.find('?');
+        std::string request = path_.substr(index + 1);
+        ParseFromUrlencoded_(request, get_);
     }
 }
 
@@ -134,40 +128,42 @@ int HttpRequest::ConverHex(char ch) {
 
 void HttpRequest::ParsePost_() {
     if (method_ == "POST") {
-        ParseFromUrlencoded_();
+        ParseFromUrlencoded_(body_, post_);
     }
 }
 
-void HttpRequest::ParseFromUrlencoded_() {
-    if (body_.size() == 0) {
+void HttpRequest::ParseFromUrlencoded_(
+    std::string& s,
+    std::unordered_map<std::string, std::string>& map) {
+    if (s.size() == 0) {
         return;
     }
 
     string key, value;
     int num = 0;
-    int n = body_.size();
+    int n = s.size();
     int i = 0, j = 0;
 
     for (; i < n; i++) {
-        char ch = body_[i];
+        char ch = s[i];
         switch (ch) {
             case '=':
-                key = body_.substr(j, i - j);
+                key = s.substr(j, i - j);
                 j = i + 1;
                 break;
             case '+':
-                body_[i] = ' ';
+                s[i] = ' ';
                 break;
             case '%':
-                num = ConverHex(body_[i + 1]) * 16 + ConverHex(body_[i + 2]);
-                body_[i + 2] = num % 10 + '0';
-                body_[i + 1] = num / 10 + '0';
+                num = ConverHex(s[i + 1]) * 16 + ConverHex(s[i + 2]);
+                s[i + 2] = num % 10 + '0';
+                s[i + 1] = num / 10 + '0';
                 i += 2;
                 break;
             case '&':
-                value = body_.substr(j, i - j);
+                value = s.substr(j, i - j);
                 j = i + 1;
-                post_[key] = value;
+                map[key] = value;
                 LOG_DEBUG("%s = %s", key.c_str(), value.c_str());
                 break;
             default:
@@ -175,9 +171,9 @@ void HttpRequest::ParseFromUrlencoded_() {
         }
     }
     assert(j <= i);
-    if (post_.count(key) == 0 && j < i) {
-        value = body_.substr(j, i - j);
-        post_[key] = value;
+    if (map.count(key) == 0 && j < i) {
+        value = s.substr(j, i - j);
+        map[key] = value;
     }
 }
 

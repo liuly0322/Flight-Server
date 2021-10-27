@@ -13,18 +13,44 @@ Flight::Flight(std::ifstream& in) {  // 字符串以空格分割，依次对应�
     // 需要先初始化链表
     have_ordered = new Order();
     have_ordered->next = nullptr;
-    InitOrderList("./resources/" + flight_num + "_O.txt");
+    InitOrderList();
 
-    InitWaitingList("./resources/" + flight_num + "_W.txt");
+    InitWaitingList();
 }
 
-Flight::~Flight() {
-    // 析构函数，需要做的事情是销毁链表
+void Flight::save(std::ofstream& out) {
+    out << destination << ' ' << flight_num << ' ' << plane_num << ' '
+        << work_day << ' ' << max_people[0] << ' ' << max_people[1] << ' '
+        << max_people[2] << ' ' << now_ticket[0] << ' ' << now_ticket[1] << ' '
+        << now_ticket[2] << '\n';
 }
 
-void Flight::InitOrderList(string s) {
-    // 传递进来文件名
-    std::ifstream in(s);
+void Flight::SaveOrderList() {
+    std::ofstream out("./resources/" + flight_num + "_O.txt");
+    if (out.is_open()) {
+        for (auto p = have_ordered->next; p; p = p->next) {
+            out << p->name << ' ' << p->grade << ' ' << p->order_num << '\n';
+        }
+        out.close();
+    }
+}
+
+void Flight::SaveWaitingList() {
+    std::ofstream out("./resources/" + flight_num + "_W.txt");
+    if (out.is_open()) {
+        while (!wait.isEmpty()) {
+            auto front = wait.deQueue();
+            out << front.name << ' ' << front.grade << ' ' << front.order_num
+                << '\n';
+        }
+        out.close();
+    }
+}
+
+Flight::~Flight() {}
+
+void Flight::InitOrderList() {
+    std::ifstream in("./resources/" + flight_num + "_O.txt");
     if (in.is_open()) {
         while (!in.eof()) {
             Order* p = new Order();
@@ -34,10 +60,8 @@ void Flight::InitOrderList(string s) {
         }
     }
 }
-void Flight::InitWaitingList(string s) {
-    // 是一个队列，每次从队尾插入即可
-    // 传递进来文件名
-    std::ifstream in(s);
+void Flight::InitWaitingList() {
+    std::ifstream in("./resources/" + flight_num + "_W.txt");
     if (in.is_open()) {
         while (!in.eof()) {
             Order x;
@@ -45,4 +69,16 @@ void Flight::InitWaitingList(string s) {
             wait.enQueue(x);
         }
     }
+}
+
+string& Flight::GetDestination() {
+    return destination;
+}
+
+string Flight::show() {
+    return flight_num + ' ' + plane_num + ' ' + std::to_string(work_day) + ' ' +
+           std::to_string(max_people[0]) + ' ' + std::to_string(max_people[1]) +
+           ' ' + std::to_string(max_people[2]) + ' ' +
+           std::to_string(now_ticket[0]) + ' ' + std::to_string(now_ticket[1]) +
+           ' ' + std::to_string(now_ticket[2]) + '\n';
 }

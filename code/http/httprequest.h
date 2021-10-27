@@ -66,7 +66,9 @@ class HttpRequest {
 
     void ParsePath_();
     void ParsePost_();
-    void ParseFromUrlencoded_();
+    void ParseFromUrlencoded_(
+        std::string& s,
+        std::unordered_map<std::string, std::string>& map);
 
     static bool UserVerify(const std::string& name,
                            const std::string& pwd,
