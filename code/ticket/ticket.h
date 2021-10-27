@@ -25,8 +25,10 @@ class Ticket {
     bool Login(string& user, string& pass);  // 返回是否登陆成功
     bool Regi(string& user, string& pass);  // 失败可能是用户名占用等
 
-    // 订票：用户，航班，几等仓，数量，返回够不够
+    // 订票，不候补
     bool Order(string& user, string& flight, int grade, int num);
+    // 订票，支持候补
+    bool OrderF(string& user, string& flight, int grade, int num);
 
     // 查询该用户当前订票情况
     string MyTick(string& user);

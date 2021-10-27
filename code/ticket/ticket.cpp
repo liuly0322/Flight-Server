@@ -25,7 +25,7 @@ void Ticket::FlightsInit() {
     ifstream flights_in("./resources/flights.txt");
     if (flights_in.is_open()) {
         while (!flights_in.eof()) {
-            Flight* p = new Flight(flights_in);
+            Flight* p = new Flight(flights_in, users);
             p->next = flights->next;
             flights->next = p;
         }
@@ -90,9 +90,7 @@ bool Ticket::Regi(string& user, string& pass) {
         }
     }
     // 接下来需要将该用户存入用户链表中
-    auto p = new Passenger();
-    p->username = user;
-    p->password = pass;
+    auto p = new Passenger(user, pass);
     p->next = users->next;
     users->next = p;
     return true;

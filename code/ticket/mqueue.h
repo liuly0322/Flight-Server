@@ -22,7 +22,6 @@ class mQueue {
     ~mQueue();
     void enQueue(T& x);  // 入队
     T deQueue();         // 出队
-    T getFront();        // 获得队头元素
     bool isEmpty();      // 判空
     int length();        // 返回长度
 };
@@ -63,11 +62,6 @@ T mQueue<T>::deQueue() {  // 删除队头元素
     front->next = p;
     size--;
     return ret;
-}
-
-template <class T>
-T mQueue<T>::getFront() {  // 获得队头元素
-    return front->next->data;
 }
 
 template <class T>

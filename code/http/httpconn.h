@@ -43,6 +43,7 @@ class HttpConn {
     sockaddr_in GetAddr() const;
 
     bool process();
+    std::string processRequest();
 
     int ToWriteBytes() { return iov_[0].iov_len + iov_[1].iov_len; }
 

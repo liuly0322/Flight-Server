@@ -12,3 +12,4 @@
 *.log
 *.exe
 /.vscode
+code/.vscode/settings.json

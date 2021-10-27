@@ -8,14 +8,25 @@
 #include <string>
 using std::string;
 
-struct Passenger {
-    string username;  // 名字
-    string password;  // 密码
-    Passenger* next;  // 链表用
+class Passenger {
+   public:
+    string username;    // 名字
+    string password;    // 密码
+    Passenger* next;    // 链表用
+    Order* order_list;  // 用户对应的订票链表
+
+    Passenger();
+    Passenger(string& name, string& pass);
+    ~Passenger();
+
+    void InsertOrder(Order& order);  // 将订票插入到结点里
 };
 
 struct Order {
     string name;
+    string flight_num;
+    bool finished;  // 是否购入
+    int id;         // 订单的 id
     int grade;      // 几等仓(0,1,2)
     int order_num;  // 订票数
     Order* next;    // 链表用
@@ -32,25 +43,29 @@ class Flight {
     Order* have_ordered;  // 已订票客户的链表
     mQueue<Order> wait;   // 候补队列
 
-   public:
-    Flight* next;  // 指向下一个航班
+    Passenger* users;  // 所有用户
+    static int id;     // 用于记录 id（全局分配）
 
-    Flight();
-    Flight(std::ifstream& in);
-    ~Flight();
-
-    void save(std::ofstream& out);
     void SaveOrderList();
     void SaveWaitingList();
 
     void InitOrderList();
     void InitWaitingList();
 
+    Passenger& FindUser(string& s);
+
+   public:
+    Flight* next;  // 指向下一个航班
+
+    Flight();
+    Flight(std::ifstream& in, Passenger* p);
+    ~Flight();
+
+    void save(std::ofstream& out);
+
     // 订票
     bool Book(string& user, int grade, int num);
-
-    // 查询
-    string MyBook(string& user);
+    bool BookF(string& user, int grade, int num);
 
     string& GetDestination();
     string show();
