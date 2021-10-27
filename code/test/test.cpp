@@ -1,6 +1,14 @@
+#include <cstdlib>
 #include <iostream>
-#include "../ticket/ticket.h"
+#include <string>
+std::string testfun() {
+    std::string res;
+    res += "23132";
+    res += "is";
+    res += "fun";
+    return res;
+}
 
 int main() {
-    Ticket t;
+    std::cout << atoi(testfun().c_str());
 }

@@ -20,6 +20,26 @@ void Passenger::InsertOrder(Order& order) {
     order_list->next = p;
 }
 
+string Passenger::MyTick() {
+    string res;
+    for (auto p = order_list->next; p; p = p->next) {
+        res += p->flight_num + ' ' + (p->finished ? "1 " : "0 ") +
+               std::to_string(p->id) + ' ' + std::to_string(p->grade) + ' ' +
+               std::to_string(p->order_num) + '\n';
+    }
+    return res;
+}
+
+void Passenger::Refund(int id) {
+    for (auto p = order_list; p->next; p = p->next) {
+        if (p->next->id == id) {
+            auto temp = p->next->next;
+            delete p->next;
+            p->next = temp;
+        }
+    }
+}
+
 int Flight::id = 0;
 
 Passenger& Flight::FindUser(string& s) {
@@ -100,13 +120,26 @@ void Flight::SaveOrderList() {
 void Flight::SaveWaitingList() {
     std::ofstream out("./resources/" + flight_num + "_W.txt");
     if (out.is_open()) {
-        while (!wait.isEmpty()) {
-            auto front = wait.deQueue();
+        mQueue<Order> temp = wait;
+        while (!temp.isEmpty()) {
+            auto front = temp.deQueue();
             out << front.name << ' ' << front.grade << ' ' << front.order_num
                 << '\n';
         }
         out.close();
     }
+}
+
+void Flight::Book(string& name, int grade, int num, bool force) {}
+
+void Flight::Refund(int id) {
+    // 航线已订票的链表中需要删除这一项
+    // 检查队列，看看能不能解决一些需求
+    // 记得更新航线的数据
+}
+
+string& Flight::GetFlight() {
+    return flight_num;
 }
 
 string& Flight::GetDestination() {

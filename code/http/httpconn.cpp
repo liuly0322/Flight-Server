@@ -103,8 +103,10 @@ ssize_t HttpConn::write(int* saveErrno) {
 
 std::string HttpConn::processRequest() {
     if (request_.method() == "GET") {  // 有 GET 请求，是查询航线
-        std::string city = request_.Get("city");
-        return ticket.query(city);
+        std::string s = request_.Get("s");
+        if (!s.empty())
+            return ticket.query(s);
+        return "";
     }
 
     // 对于 admin 登录，进行保存操作
@@ -113,14 +115,15 @@ std::string HttpConn::processRequest() {
         return "";
     }
 
-    std::string state = request_.GetPost("state");        // 操作
+    int state = atoi(request_.GetPost("state").c_str());  // 操作
     std::string username = request_.GetPost("username");  // 账户名
     std::string password = request_.GetPost("password");  // 密码
     std::string flight = request_.GetPost("flight");      // 航班号
-    std::string grade = request_.GetPost("grade");        // 几等仓
-    std::string num = request_.GetPost("num");            // 订票数量
+    int grade = atoi(request_.GetPost("grade").c_str());  // 几等仓
+    int num = atoi(request_.GetPost("num").c_str());      // 订票数量
+    int id = atoi(request_.GetPost("id").c_str());        // 退票id
 
-    if (state == "1") {
+    if (state == 1) {
         if (ticket.Regi(username, password)) {
             return "注册成功";
         } else {
@@ -132,23 +135,18 @@ std::string HttpConn::processRequest() {
         return "登录失败";
     }
 
-    if (state == "2") {
-        if (ticket.Login(username, password)) {
-            return "登录成功";
-        }
-    }
+    if (state == 2)
+        return "登录成功";
 
-    if (state == "3") {
+    if (state == 3)
         return ticket.MyTick(username);
-    }
 
-    if (state == "4") {
-    }
-
-    if (state == "5") {
-    }
-
-    if (state == "6") {
+    if (state == 4) {
+        ticket.Book(username, flight, grade, num, false);
+    } else if (state == 5) {
+        ticket.Book(username, flight, grade, num, true);
+    } else if (state == 6) {
+        ticket.Refund(username, id);
     }
 
     return "";
@@ -161,8 +159,10 @@ bool HttpConn::process() {
     } else if (request_.parse(readBuff_)) {
         LOG_DEBUG("%s", request_.path().c_str());
         if (request_.method() == "POST" ||
-            request_.method() == "GET" && !request_.GetEmpty()) {
+            (request_.method() == "GET" && !request_.GetEmpty())) {
+            mtx.lock();
             std::string res = processRequest();
+            mtx.unlock();
             response_.Init(srcDir, request_.path(), request_.IsKeepAlive(),
                            200);
             response_.MakeResponse(writeBuff_, res);

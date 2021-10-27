@@ -22,18 +22,19 @@ class Ticket {
 
     void Save();  // 将当前状态写入到文件里
 
-    bool Login(string& user, string& pass);  // 返回是否登陆成功
-    bool Regi(string& user, string& pass);  // 失败可能是用户名占用等
+    bool Login(string& name, string& pass);  // 返回是否登陆成功
+    bool Regi(string& name, string& pass);  // 失败可能是用户名占用等
 
-    // 订票，不候补
-    bool Order(string& user, string& flight, int grade, int num);
-    // 订票，支持候补
-    bool OrderF(string& user, string& flight, int grade, int num);
+    // 订票
+    void Book(string& name, string& flight, int grade, int num, bool force);
+    // 退票
+    void Refund(string& name, int id);
 
     // 查询该用户当前订票情况
-    string MyTick(string& user);
+    string MyTick(string& name);
 
-    string query(string& city);
+    // 查询城市或航班号所有线路
+    string query(string& s);
 };
 
 #endif  // TICKET

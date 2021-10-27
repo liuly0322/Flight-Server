@@ -20,6 +20,10 @@ class Passenger {
     ~Passenger();
 
     void InsertOrder(Order& order);  // 将订票插入到结点里
+
+    string MyTick();  // 获取本人所有订单情况
+
+    void Refund(int id);  // 退票
 };
 
 struct Order {
@@ -64,9 +68,12 @@ class Flight {
     void save(std::ofstream& out);
 
     // 订票
-    bool Book(string& user, int grade, int num);
-    bool BookF(string& user, int grade, int num);
+    void Book(string& name, int grade, int num, bool force);
 
+    // 退票
+    void Refund(int id);
+
+    string& GetFlight();
     string& GetDestination();
     string show();
 };

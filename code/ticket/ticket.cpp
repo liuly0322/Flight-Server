@@ -46,10 +46,10 @@ Ticket::Ticket() {
 
 Ticket::~Ticket() {}
 
-bool Ticket::Login(string& user, string& pass) {
+bool Ticket::Login(string& name, string& pass) {
     // 需要遍历 users 链表
     for (auto p = users->next; p; p = p->next) {
-        if (p->username == user && p->password == pass) {
+        if (p->username == name && p->password == pass) {
             return true;
         }
     }
@@ -82,25 +82,70 @@ void Ticket::FlightsSave() {
     }
 }
 
-bool Ticket::Regi(string& user, string& pass) {
+bool Ticket::Regi(string& name, string& pass) {
     // 需要遍历 users 链表，判断用户名是否重复
     for (auto p = users->next; p; p = p->next) {
-        if (p->username == user) {
+        if (p->username == name) {
             return false;
         }
     }
     // 接下来需要将该用户存入用户链表中
-    auto p = new Passenger(user, pass);
+    auto p = new Passenger(name, pass);
     p->next = users->next;
     users->next = p;
     return true;
 }
 
-string Ticket::query(string& city) {
+void Ticket::Book(string& name,
+                  string& flight,
+                  int grade,
+                  int num,
+                  bool force) {
+    for (auto p = flights->next; p; p = p->next) {
+        if (p->GetFlight() == flight) {
+            p->Book(name, grade, num, force);
+            return;
+        }
+    }
+}
+
+void Ticket::Refund(string& name, int id) {
+    for (auto user = users->next; user; user = user->next) {
+        if (user->username == name) {
+            // 找到用户了，下面开始找 id
+            for (auto order = user->order_list->next; order;
+                 order = order->next) {
+                if (order->id == id) {
+                    // 找到 id 了，再找到对应的航班去退票
+                    for (auto flight = flights->next; flight;
+                         flight = flight->next) {
+                        if (flight->GetFlight() == order->flight_num) {
+                            // 找到航班了，去退票
+                            user->Refund(id);
+                            flight->Refund(id);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+string Ticket::MyTick(string& name) {
+    for (auto p = users->next; p; p = p->next) {
+        if (p->username == name) {
+            // 这就是需要找的用户
+            return p->MyTick();
+        }
+    }
+}
+
+string Ticket::query(string& s) {
     // 输入城市，查询所有符合要求的航班
     string res;
     for (auto p = flights->next; p; p = p->next) {
-        if (p->GetDestination() == city) {
+        if (p->GetDestination() == s || p->GetFlight() == s) {
             res += p->show();
         }
     }
