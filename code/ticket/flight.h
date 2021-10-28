@@ -8,6 +8,16 @@
 #include <string>
 using std::string;
 
+struct Order {
+    string name;
+    string flight_num;
+    bool finished;  // 是否购入
+    int id;         // 订单的 id
+    int grade;      // 几等仓(0,1,2)
+    int order_num;  // 订票数
+    Order* next;    // 链表用
+};
+
 class Passenger {
    public:
     string username;    // 名字
@@ -27,26 +37,16 @@ class Passenger {
     void Refund(int id);      // 退票
 };
 
-struct Order {
-    string name;
-    string flight_num;
-    bool finished;  // 是否购入
-    int id;         // 订单的 id
-    int grade;      // 几等仓(0,1,2)
-    int order_num;  // 订票数
-    Order* next;    // 链表用
-};
-
 class Flight {
    private:
-    string destination;   // 目的地
-    string flight_num;    // 航班号
-    string plane_num;     // 飞机号
-    int work_day;         // 星期几（一到七）
-    int max_people[3];    // 最大乘坐人数
-    int now_ticket[3];    // 余票量
-    Order* have_ordered;  // 已订票客户的链表
-    mQueue<Order> wait;   // 候补队列
+    string destination;     // 目的地
+    string flight_num;      // 航班号
+    string plane_num;       // 飞机号
+    int work_day;           // 星期几（一到七）
+    int max_people[3];      // 最大乘坐人数
+    int now_ticket[3];      // 余票量
+    Order* have_ordered;    // 已订票客户的链表
+    mQueue<Order> wait[3];  // 三个舱的候补队列
 
     Passenger* users;  // 所有用户
     static int id;     // 用于记录 id（全局分配）

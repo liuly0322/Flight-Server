@@ -107,7 +107,7 @@ void Flight::InitWaitingList() {
             x.flight_num = flight_num;
             x.id = id++;
             FindUser(x.name).InsertOrder(x);
-            wait.enQueue(x);
+            wait[x.grade].enQueue(x);
         }
     }
 }
@@ -134,12 +134,15 @@ void Flight::SaveOrderList() {
 void Flight::SaveWaitingList() {
     std::ofstream out("./resources/" + flight_num + "_W.txt");
     if (out.is_open()) {
-        mQueue<Order> temp = wait;
-        while (!temp.isEmpty()) {
-            auto front = temp.deQueue();
-            out << front.name << ' ' << front.grade << ' ' << front.order_num
-                << '\n';
+        for (int i = 0; i < 3; i++) {
+            mQueue<Order> temp = wait[i];
+            while (!temp.isEmpty()) {
+                auto front = temp.deQueue();
+                out << front.name << ' ' << front.grade << ' '
+                    << front.order_num << '\n';
+            }
         }
+
         out.close();
     }
 }
@@ -162,31 +165,30 @@ void Flight::Book(string& name, int grade, int num, bool force) {
     } else {
         p->finished = false;
         FindUser(name).Book(*p);
-        wait.enQueue(*p);
+        wait[grade].enQueue(*p);
         delete p;
     }
 }
 
 void Flight::Refund(int id) {
     // 航线已订票的链表中需要删除这一项
-    int grade, num;
+    int grade = 0;
     for (auto p = have_ordered; p->next; p = p->next) {
         if (p->next->id == id) {
-            auto temp = p->next->next;
             grade = p->next->grade;
-            num = p->next->order_num;
+            now_ticket[p->next->grade] += p->next->order_num;
+            auto temp = p->next->next;
             delete p->next;
             p->next = temp;
             break;
         }
     }
-    now_ticket[grade] += num;
     // 检查队列，看看能不能解决一些需求
-    while (!wait.isEmpty()) {
-        auto order = wait.getFront();
+    while (!wait[grade].isEmpty()) {
+        auto order = wait[grade].getFront();
         if (now_ticket[order.grade] > order.order_num) {
             Book(order.name, order.grade, order.order_num, false);
-            wait.deQueue();
+            wait[grade].deQueue();
         } else {
             break;
         }
@@ -202,9 +204,10 @@ string& Flight::GetDestination() {
 }
 
 string Flight::show() {
-    return flight_num + ' ' + plane_num + ' ' + std::to_string(work_day) + ' ' +
-           std::to_string(max_people[0]) + ' ' + std::to_string(max_people[1]) +
-           ' ' + std::to_string(max_people[2]) + ' ' +
-           std::to_string(now_ticket[0]) + ' ' + std::to_string(now_ticket[1]) +
-           ' ' + std::to_string(now_ticket[2]) + '\n';
+    return destination + ' ' + flight_num + ' ' + plane_num + ' ' +
+           std::to_string(work_day) + ' ' + std::to_string(max_people[0]) +
+           ' ' + std::to_string(max_people[1]) + ' ' +
+           std::to_string(max_people[2]) + ' ' + std::to_string(now_ticket[0]) +
+           ' ' + std::to_string(now_ticket[1]) + ' ' +
+           std::to_string(now_ticket[2]) + '\n';
 }

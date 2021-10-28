@@ -139,6 +139,7 @@ string Ticket::MyTick(string& name) {
             return p->MyTick();
         }
     }
+    return "";
 }
 
 string Ticket::query(string& s) {
