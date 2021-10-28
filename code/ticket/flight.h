@@ -23,7 +23,8 @@ class Passenger {
 
     string MyTick();  // 获取本人所有订单情况
 
-    void Refund(int id);  // 退票
+    void Book(Order& order);  // 订票
+    void Refund(int id);      // 退票
 };
 
 struct Order {

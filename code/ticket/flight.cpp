@@ -30,6 +30,20 @@ string Passenger::MyTick() {
     return res;
 }
 
+void Passenger::Book(Order& order) {
+    // 先校验 id，看看是不是退票导致的
+    for (auto p = order_list->next; p; p = p->next) {
+        if (p->id == order.id) {
+            p->finished = true;
+            return;
+        }
+    }
+    // 需要复制这个 order，然后插入到自己订票链表的头
+    auto p = new Order(order);
+    p->next = order_list->next;
+    order_list->next = p;
+}
+
 void Passenger::Refund(int id) {
     for (auto p = order_list; p->next; p = p->next) {
         if (p->next->id == id) {
@@ -130,12 +144,53 @@ void Flight::SaveWaitingList() {
     }
 }
 
-void Flight::Book(string& name, int grade, int num, bool force) {}
+void Flight::Book(string& name, int grade, int num, bool force) {
+    if (now_ticket[grade] < num && !force)  // 不够卖
+        return;
+    auto p = new Order();
+    p->name = name;
+    p->flight_num = flight_num;
+    p->id = id++;
+    p->grade = grade;
+    p->order_num = num;
+    if (now_ticket[grade] >= num) {  // 余票还够
+        p->finished = true;
+        FindUser(name).Book(*p);
+        now_ticket[grade] -= num;
+        p->next = have_ordered->next;
+        have_ordered->next = p;
+    } else {
+        p->finished = false;
+        FindUser(name).Book(*p);
+        wait.enQueue(*p);
+        delete p;
+    }
+}
 
 void Flight::Refund(int id) {
     // 航线已订票的链表中需要删除这一项
+    int grade, num;
+    for (auto p = have_ordered; p->next; p = p->next) {
+        if (p->next->id == id) {
+            auto temp = p->next->next;
+            grade = p->next->grade;
+            num = p->next->order_num;
+            delete p->next;
+            p->next = temp;
+            break;
+        }
+    }
+    now_ticket[grade] += num;
     // 检查队列，看看能不能解决一些需求
-    // 记得更新航线的数据
+    while (!wait.isEmpty()) {
+        auto order = wait.getFront();
+        if (now_ticket[order.grade] > order.order_num) {
+            Book(order.name, order.grade, order.order_num, false);
+            wait.deQueue();
+        } else {
+            break;
+        }
+    }
 }
 
 string& Flight::GetFlight() {
