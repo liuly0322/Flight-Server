@@ -13,3 +13,6 @@
 *.exe
 /.vscode
 code/.vscode/settings.json
+
+/resources/*.txt
+/code/test
