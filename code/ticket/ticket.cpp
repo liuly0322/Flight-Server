@@ -9,12 +9,12 @@ using std::ofstream;
 void Ticket::UsersInit() {
     // 初始用户数据从 users.txt 中读取
     // 约定每一行空格分割 用户名 和 密码
-    ifstream users_in("./resources/users.txt");
-    if (users_in.is_open()) {
-        while (!users_in.eof()) {
+    ifstream in("./resources/users.txt");
+    if (in.is_open()) {
+        while (in.peek() != EOF) {
             // 头插法插入链表
             Passenger* p = new Passenger();
-            users_in >> p->username >> p->password;
+            in >> p->username >> p->password;
             p->next = users->next;
             users->next = p;
         }
@@ -22,10 +22,10 @@ void Ticket::UsersInit() {
 }
 
 void Ticket::FlightsInit() {
-    ifstream flights_in("./resources/flights.txt");
-    if (flights_in.is_open()) {
-        while (!flights_in.eof()) {
-            Flight* p = new Flight(flights_in, users);
+    ifstream in("./resources/flights.txt");
+    if (in.is_open()) {
+        while (in.peek() != EOF) {
+            Flight* p = new Flight(in, users);
             p->next = flights->next;
             flights->next = p;
         }
@@ -66,7 +66,7 @@ void Ticket::UsersSave() {
     ofstream out("./resources/users.txt");
     if (out.is_open()) {
         for (auto p = users->next; p; p = p->next) {
-            out << p->username << ' ' << p->password << '\n';
+            out << '\n' << p->username << ' ' << p->password;
         }
         out.close();
     }

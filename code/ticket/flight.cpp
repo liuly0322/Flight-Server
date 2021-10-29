@@ -85,7 +85,7 @@ Flight::~Flight() {}
 void Flight::InitOrderList() {
     std::ifstream in("./resources/" + flight_num + "_O.txt");
     if (in.is_open()) {
-        while (!in.eof()) {
+        while (in.peek() != EOF) {
             Order* p = new Order();
             in >> p->name >> p->grade >> p->order_num;
             p->next = have_ordered->next;
@@ -100,7 +100,7 @@ void Flight::InitOrderList() {
 void Flight::InitWaitingList() {
     std::ifstream in("./resources/" + flight_num + "_W.txt");
     if (in.is_open()) {
-        while (!in.eof()) {
+        while (in.peek() != EOF) {
             Order x;
             in >> x.name >> x.grade >> x.order_num;
             x.finished = false;
@@ -113,10 +113,11 @@ void Flight::InitWaitingList() {
 }
 
 void Flight::save(std::ofstream& out) {
-    out << destination << ' ' << flight_num << ' ' << plane_num << ' '
+    out << '\n'
+        << destination << ' ' << flight_num << ' ' << plane_num << ' '
         << work_day << ' ' << max_people[0] << ' ' << max_people[1] << ' '
         << max_people[2] << ' ' << now_ticket[0] << ' ' << now_ticket[1] << ' '
-        << now_ticket[2] << '\n';
+        << now_ticket[2];
     SaveOrderList();
     SaveWaitingList();
 }
@@ -125,7 +126,7 @@ void Flight::SaveOrderList() {
     std::ofstream out("./resources/" + flight_num + "_O.txt");
     if (out.is_open()) {
         for (auto p = have_ordered->next; p; p = p->next) {
-            out << p->name << ' ' << p->grade << ' ' << p->order_num << '\n';
+            out << '\n' << p->name << ' ' << p->grade << ' ' << p->order_num;
         }
         out.close();
     }
@@ -138,8 +139,9 @@ void Flight::SaveWaitingList() {
             mQueue<Order> temp = wait[i];
             while (!temp.isEmpty()) {
                 auto front = temp.deQueue();
-                out << front.name << ' ' << front.grade << ' '
-                    << front.order_num << '\n';
+                out << '\n'
+                    << front.name << ' ' << front.grade << ' '
+                    << front.order_num;
             }
         }
 
