@@ -1,0 +1,67 @@
+.hidden{
+    display: none;
+}
+
+.header{
+    overflow: hidden;
+}
+
+.header .logo{
+    float: left;
+}
+
+.header .title{
+    text-align: center;
+}
+
+.header .toggle{
+    float: right;
+    position: relative;
+    bottom: 50px;
+}
+
+.register, .login, .book{
+    background-color: aliceblue;
+    border: 1px solid black;
+    position: fixed;
+    top:200px;
+    left:0px;
+    right:0px;
+    width:400px;
+    height:300px;
+    margin: auto;
+    text-align: center;
+}
+
+.register .close, .login .close, .book .close{
+    float: right;
+    position: relative;
+    bottom: 40px;
+    right: 20px
+}
+
+.query{
+    text-align: center;
+}
+
+#mine{
+    margin: 20px;
+    text-align: center;
+}
+
+.flex{
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-item{
+    margin: 10px;
+}
+
+#queryRes{
+    margin: 20px;
+}
+
+.table{
+    margin: auto;
+}

@@ -147,7 +147,8 @@ bool Flight::Verify(int grade, int num) {
 }
 
 bool Flight::Book(string& name, int grade, int num, bool force) {
-    if (now_ticket[grade] < num && !force)  // 不够卖
+    if (max_people[grade] < num ||
+        (now_ticket[grade] < num && !force))  // 不够卖
         return false;
     auto p = new Order();
     p->name = name;

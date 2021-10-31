@@ -111,7 +111,11 @@ std::string HttpConn::processRequest() {
         if (grade.empty() || num.empty())
             return ticket.query(s);
         // 否则需要将 grade 和 num转换成整数
-        return ticket.query(s, atoi(grade.c_str()), atoi(num.c_str()));
+        int grade_ = atoi(grade.c_str());
+        int num_ = atoi(num.c_str());
+        if (grade_ < 0 || grade_ > 2 || num_ < 1)
+            return "";
+        return ticket.query(s, grade_, num_);
     }
 
     // 对于 admin 登录，进行保存操作
@@ -147,11 +151,15 @@ std::string HttpConn::processRequest() {
         return ticket.MyTick(username);
 
     if (state == 4) {
+        if (grade < 0 || grade > 2 || num < 1)
+            return "";
         if (!ticket.Book(username, flight, grade, num, false)) {
             // 没定上票，需要推荐
             return "订票失败";
         }
     } else if (state == 5) {
+        if (grade < 0 || grade > 2 || num < 1)
+            return "";
         ticket.Book(username, flight, grade, num, true);
     } else if (state == 6) {
         ticket.Refund(username, id);

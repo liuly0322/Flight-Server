@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>航空客运订票系统</title>
+    <link href="main.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="axios.min.js"></script>
+    <script type="text/javascript" src="pinyin.js"></script>
+</head>
+
+<body>
+    <div class="header">
+        <img src="logo.png" class="logo">
+        <h1 class="title">航空客运订票系统</h1>
+        <div class="account">
+            <div class="register hidden">
+                <h2>注册</h2>
+                <button class="close" onclick="toggleHidden('.register')">退出</button>
+                <div class="flex">
+                    <div class="flex-item">账户：
+                        <input id="regiName" type="text">
+                    </div>
+                    <div class="flex-item">密码：
+                        <input id="regiPass" type="password">
+                    </div>
+                </div>
+                <button onclick="regi()">提交</button>
+            </div>
+            <div class="login hidden">
+                <h2>登录</h2>
+                <button class="close" onclick="toggleHidden('.login')">退出</button>
+                <div class="flex">
+                    <div class="flex-item">账户：
+                        <input id="loginName" type="text">
+                    </div>
+                    <div class="flex-item">密码：
+                        <input id="loginPass" type="password">
+                    </div>
+                </div>
+                <button onclick="login()">提交</button>
+            </div>
+            <div class="book hidden">
+                <h2>订票</h2>
+                <button class="close" onclick="toggleHidden('.book')">退出</button>
+                <div class="flex">
+                    <div class="flex-item">舱位：
+                        <input id="bookGrade" type="number" min="1" max="3">
+                    </div>
+                    <div class="flex-item">票数：
+                        <input id="bookNum" type="number">
+                    </div>
+                    <div class="flex-item">是否愿意候补：
+                        <input type="radio" id="wait" name="wait" value="true">接受
+                        <input type="radio" name="wait" value="false" checked>不接受
+                    </div>
+                </div>
+                <button onclick="bookTicket()">提交</button>
+            </div>
+        </div>
+        <div class="toggle">
+            <button class="hidden" id="regi" onclick="toggleHidden('.register')">注册</button>
+            <button class="hidden" id="login" onclick="toggleHidden('.login')">登录</button>
+            <button class="hidden" id="quit" onclick="quit()">注销</button>
+        </div>
+    </div>
+    <div class="main">
+        <!-- 这里是主体部分，包含查询逻辑 -->
+        <div class="query">
+            <!-- 这一部分负责查询 -->
+            <div>
+                城市或航线：
+                <input id="s" type="text">
+                <button onclick="query()">查询</button>
+            </div>
+            <div id="queryRes">
+                <!-- 查询结果在这里显示 -->
+            </div>
+        </div>
+        <div id="mine" class="hidden">
+            <h2 class="myhead">我订的票</h2>
+            <div id="myTick">
+                <!-- 我订的票在这里显示 -->
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="main.js"></script>
+
+</html>
