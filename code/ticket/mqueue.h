@@ -79,6 +79,8 @@ T mQueue<T>::deQueue() {  // 删除队头元素
     delete front->next;
     front->next = p;
     size--;
+    if (!size)
+        rear = front;
     return ret;
 }
 

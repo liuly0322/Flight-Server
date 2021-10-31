@@ -69,10 +69,13 @@ class Flight {
     void save(std::ofstream& out);
 
     // 订票
-    void Book(string& name, int grade, int num, bool force);
+    bool Book(string& name, int grade, int num, bool force);
 
     // 退票
     void Refund(int id);
+
+    // 验证票够不够
+    bool Verify(int grade, int num);
 
     string& GetFlight();
     string& GetDestination();

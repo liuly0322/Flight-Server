@@ -31,14 +31,6 @@ string Passenger::MyTick() {
 }
 
 void Passenger::Book(Order& order) {
-    // 先校验 id，看看是不是退票导致的
-    for (auto p = order_list->next; p; p = p->next) {
-        if (p->id == order.id) {
-            p->finished = true;
-            return;
-        }
-    }
-    // 需要复制这个 order，然后插入到自己订票链表的头
     auto p = new Order(order);
     p->next = order_list->next;
     order_list->next = p;
@@ -50,6 +42,7 @@ void Passenger::Refund(int id) {
             auto temp = p->next->next;
             delete p->next;
             p->next = temp;
+            return;
         }
     }
 }
@@ -149,9 +142,13 @@ void Flight::SaveWaitingList() {
     }
 }
 
-void Flight::Book(string& name, int grade, int num, bool force) {
+bool Flight::Verify(int grade, int num) {
+    return now_ticket[grade] >= num ? true : false;
+}
+
+bool Flight::Book(string& name, int grade, int num, bool force) {
     if (now_ticket[grade] < num && !force)  // 不够卖
-        return;
+        return false;
     auto p = new Order();
     p->name = name;
     p->flight_num = flight_num;
@@ -170,6 +167,7 @@ void Flight::Book(string& name, int grade, int num, bool force) {
         wait[grade].enQueue(*p);
         delete p;
     }
+    return true;
 }
 
 void Flight::Refund(int id) {
@@ -187,9 +185,19 @@ void Flight::Refund(int id) {
     }
     // 检查队列，看看能不能解决一些需求
     while (!wait[grade].isEmpty()) {
-        auto order = wait[grade].getFront();
-        if (now_ticket[order.grade] > order.order_num) {
-            Book(order.name, order.grade, order.order_num, false);
+        auto order = new Order(wait[grade].getFront());
+        if (now_ticket[order->grade] >= order->order_num) {
+            // 一方面是直接以现在的 id 插入到订票列表里
+            now_ticket[order->grade] -= order->order_num;
+            order->next = have_ordered->next;
+            have_ordered->next = order;
+            // 一方面是要把用户链表里的 finished 状态改掉
+            for (auto p = FindUser(order->name).order_list->next; p;
+                 p = p->next)
+                if (p->id == order->id) {
+                    p->finished = true;
+                    break;
+                }
             wait[grade].deQueue();
         } else {
             break;

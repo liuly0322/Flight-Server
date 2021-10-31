@@ -26,7 +26,7 @@ class Ticket {
     bool Regi(string& name, string& pass);  // 失败可能是用户名占用等
 
     // 订票
-    void Book(string& name, string& flight, int grade, int num, bool force);
+    bool Book(string& name, string& flight, int grade, int num, bool force);
     // 退票
     void Refund(string& name, int id);
 
@@ -35,6 +35,7 @@ class Ticket {
 
     // 查询城市或航班号所有线路
     string query(string& s);
+    string query(string& s, int grade, int num);
 };
 
 #endif  // TICKET

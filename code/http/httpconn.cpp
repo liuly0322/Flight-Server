@@ -102,11 +102,16 @@ ssize_t HttpConn::write(int* saveErrno) {
 }
 
 std::string HttpConn::processRequest() {
-    if (request_.method() == "GET") {  // 有 GET 请求，是查询航线
-        std::string s = request_.Get("s");
-        if (!s.empty())
+    // 对于查询操作
+    std::string s = request_.Get("s");
+    if (!s.empty()) {
+        // 这个时候可能有 grade 和 num 传入
+        std::string grade = request_.Get("grade");
+        std::string num = request_.Get("num");
+        if (grade.empty() || num.empty())
             return ticket.query(s);
-        return "";
+        // 否则需要将 grade 和 num转换成整数
+        return ticket.query(s, atoi(grade.c_str()), atoi(num.c_str()));
     }
 
     // 对于 admin 登录，进行保存操作
@@ -115,13 +120,13 @@ std::string HttpConn::processRequest() {
         return "";
     }
 
-    int state = atoi(request_.GetPost("state").c_str());  // 操作
-    std::string username = request_.GetPost("username");  // 账户名
-    std::string password = request_.GetPost("password");  // 密码
-    std::string flight = request_.GetPost("flight");      // 航班号
-    int grade = atoi(request_.GetPost("grade").c_str());  // 几等仓
-    int num = atoi(request_.GetPost("num").c_str());      // 订票数量
-    int id = atoi(request_.GetPost("id").c_str());        // 退票id
+    int state = atoi(request_.Get("state").c_str());  // 操作
+    std::string username = request_.Get("username");  // 账户名
+    std::string password = request_.Get("password");  // 密码
+    std::string flight = request_.Get("flight");      // 航班号
+    int grade = atoi(request_.Get("grade").c_str());  // 几等仓
+    int num = atoi(request_.Get("num").c_str());      // 订票数量
+    int id = atoi(request_.Get("id").c_str());        // 退票id
 
     if (state == 1) {
         if (ticket.Regi(username, password)) {
@@ -142,7 +147,10 @@ std::string HttpConn::processRequest() {
         return ticket.MyTick(username);
 
     if (state == 4) {
-        ticket.Book(username, flight, grade, num, false);
+        if (!ticket.Book(username, flight, grade, num, false)) {
+            // 没定上票，需要推荐
+            return "订票失败";
+        }
     } else if (state == 5) {
         ticket.Book(username, flight, grade, num, true);
     } else if (state == 6) {

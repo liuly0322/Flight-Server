@@ -96,17 +96,17 @@ bool Ticket::Regi(string& name, string& pass) {
     return true;
 }
 
-void Ticket::Book(string& name,
+bool Ticket::Book(string& name,
                   string& flight,
                   int grade,
                   int num,
                   bool force) {
     for (auto p = flights->next; p; p = p->next) {
         if (p->GetFlight() == flight) {
-            p->Book(name, grade, num, force);
-            return;
+            return p->Book(name, grade, num, force);
         }
     }
+    return false;
 }
 
 void Ticket::Refund(string& name, int id) {
@@ -147,6 +147,18 @@ string Ticket::query(string& s) {
     string res;
     for (auto p = flights->next; p; p = p->next) {
         if (p->GetDestination() == s || p->GetFlight() == s) {
+            res += p->show();
+        }
+    }
+    return res;
+}
+
+string Ticket::query(string& s, int grade, int num) {
+    // 查询还需要验证余票是否符合
+    string res;
+    for (auto p = flights->next; p; p = p->next) {
+        if ((p->GetDestination() == s || p->GetFlight() == s) &&
+            p->Verify(grade, num)) {
             res += p->show();
         }
     }
