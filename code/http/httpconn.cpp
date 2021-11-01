@@ -109,7 +109,7 @@ std::string HttpConn::processRequest() {
             ticket.Save();
             return "文件已保存";
         } else {
-            ticket.AdminQuery(s);
+            return ticket.AdminQuery(s);
         }
     }
 
