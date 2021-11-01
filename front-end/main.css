@@ -2,8 +2,10 @@
     display: none;
 }
 
-.header{
-    overflow: hidden;
+.header {
+	overflow: hidden;
+	background-image: url(logo.png);
+	background-repeat: no-repeat;
 }
 
 .header .logo{
