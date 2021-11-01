@@ -102,6 +102,17 @@ ssize_t HttpConn::write(int* saveErrno) {
 }
 
 std::string HttpConn::processRequest() {
+    // 对于 admin 登录
+    if (request_.GetPost("admin") == "password") {
+        std::string s = request_.GetPost("s");
+        if (s.empty()) {  // 如果没有传入查询参数
+            ticket.Save();
+            return "文件已保存";
+        } else {
+            ticket.AdminQuery(s);
+        }
+    }
+
     // 对于查询操作
     std::string s = request_.Get("s");
     if (!s.empty()) {
@@ -116,12 +127,6 @@ std::string HttpConn::processRequest() {
         if (grade_ < 0 || grade_ > 2 || num_ < 1)
             return "";
         return ticket.query(s, grade_, num_);
-    }
-
-    // 对于 admin 登录，进行保存操作
-    if (request_.GetPost("admin") == "password") {
-        ticket.Save();
-        return "";
     }
 
     int state = atoi(request_.Get("state").c_str());  // 操作

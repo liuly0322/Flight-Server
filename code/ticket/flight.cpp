@@ -222,3 +222,22 @@ string Flight::show() {
            ' ' + std::to_string(now_ticket[1]) + ' ' +
            std::to_string(now_ticket[2]) + '\n';
 }
+
+string Flight::ShowBook() {
+    string res;
+    res += "已经订票的用户：\n";
+    for (auto p = have_ordered->next; p; p = p->next) {
+        res += p->name + ' ' + std::to_string(p->grade) + ' ' +
+               std::to_string(p->order_num) + '\n';
+    }
+    for (int i = 0; i < 3; i++) {
+        res += std::to_string(i + 1) + "等舱候补：\n";
+        mQueue<Order> temp = wait[i];
+        while (!temp.isEmpty()) {
+            Order order = temp.deQueue();
+            res += order.name + ' ' + std::to_string(order.grade) + ' ' +
+                   std::to_string(order.order_num) + '\n';
+        }
+    }
+    return res;
+}

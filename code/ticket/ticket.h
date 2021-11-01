@@ -36,6 +36,9 @@ class Ticket {
     // 查询城市或航班号所有线路
     string query(string& s);
     string query(string& s, int grade, int num);
+
+    // 查询某航线所有订票用户
+    string AdminQuery(string& s);
 };
 
 #endif  // TICKET

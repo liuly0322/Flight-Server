@@ -143,7 +143,7 @@ string Ticket::MyTick(string& name) {
 }
 
 string Ticket::query(string& s) {
-    // 输入城市，查询所有符合要求的航班
+    // 输入城市或航班，查询所有符合要求的航班
     string res;
     for (auto p = flights->next; p; p = p->next) {
         if (p->GetDestination() == s || p->GetFlight() == s) {
@@ -163,4 +163,14 @@ string Ticket::query(string& s, int grade, int num) {
         }
     }
     return res;
+}
+
+string Ticket::AdminQuery(string& s) {
+    // 找到指定的航班
+    for (auto p = flights->next; p; p = p->next) {
+        if (p->GetFlight() == s) {
+            return p->ShowBook();
+        }
+    }
+    return "";
 }

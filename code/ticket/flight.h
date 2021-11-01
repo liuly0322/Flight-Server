@@ -80,6 +80,7 @@ class Flight {
     string& GetFlight();
     string& GetDestination();
     string show();
+    string ShowBook();
 };
 
 #endif

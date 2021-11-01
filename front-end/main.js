@@ -1,4 +1,4 @@
-const url = "http://8.142.17.250:9006/"
+const url = "http://127.0.0.1:1316/"
 function toggleHidden(s) {
   document.querySelector(s).classList.toggle('hidden')
 }
