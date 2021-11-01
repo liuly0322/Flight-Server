@@ -9,7 +9,7 @@ using std::ofstream;
 void Ticket::UsersInit() {
     // 初始用户数据从 users.txt 中读取
     // 约定每一行空格分割 用户名 和 密码
-    ifstream in("./resources/users.txt");
+    ifstream in("./data/users.txt");
     if (in.is_open()) {
         while (in.peek() != EOF) {
             // 头插法插入链表
@@ -22,7 +22,7 @@ void Ticket::UsersInit() {
 }
 
 void Ticket::FlightsInit() {
-    ifstream in("./resources/flights.txt");
+    ifstream in("./data/flights.txt");
     if (in.is_open()) {
         while (in.peek() != EOF) {
             Flight* p = new Flight(in, users);
@@ -63,7 +63,7 @@ void Ticket::Save() {  // 保存
 }
 
 void Ticket::UsersSave() {
-    ofstream out("./resources/users.txt");
+    ofstream out("./data/users.txt");
     if (out.is_open()) {
         for (auto p = users->next; p; p = p->next) {
             out << '\n' << p->username << ' ' << p->password;
@@ -73,7 +73,7 @@ void Ticket::UsersSave() {
 }
 
 void Ticket::FlightsSave() {
-    ofstream out("./resources/flights.txt");
+    ofstream out("./data/flights.txt");
     if (out.is_open()) {
         for (auto p = flights->next; p; p = p->next) {
             p->save(out);

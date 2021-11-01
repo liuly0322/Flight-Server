@@ -76,7 +76,7 @@ Flight::Flight(std::ifstream& in,
 Flight::~Flight() {}
 
 void Flight::InitOrderList() {
-    std::ifstream in("./resources/" + flight_num + "_O.txt");
+    std::ifstream in("./data/" + flight_num + "_O.txt");
     if (in.is_open()) {
         while (in.peek() != EOF) {
             Order* p = new Order();
@@ -91,7 +91,7 @@ void Flight::InitOrderList() {
     }
 }
 void Flight::InitWaitingList() {
-    std::ifstream in("./resources/" + flight_num + "_W.txt");
+    std::ifstream in("./data/" + flight_num + "_W.txt");
     if (in.is_open()) {
         while (in.peek() != EOF) {
             Order x;
@@ -116,7 +116,7 @@ void Flight::save(std::ofstream& out) {
 }
 
 void Flight::SaveOrderList() {
-    std::ofstream out("./resources/" + flight_num + "_O.txt");
+    std::ofstream out("./data/" + flight_num + "_O.txt");
     if (out.is_open()) {
         for (auto p = have_ordered->next; p; p = p->next) {
             out << '\n' << p->name << ' ' << p->grade << ' ' << p->order_num;
@@ -126,7 +126,7 @@ void Flight::SaveOrderList() {
 }
 
 void Flight::SaveWaitingList() {
-    std::ofstream out("./resources/" + flight_num + "_W.txt");
+    std::ofstream out("./data/" + flight_num + "_W.txt");
     if (out.is_open()) {
         for (int i = 0; i < 3; i++) {
             mQueue<Order> temp = wait[i];
