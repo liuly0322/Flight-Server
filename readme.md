@@ -1,6 +1,10 @@
 # Flight Web Server
 
+## 版权说明
+
 * 基于 [TinyWebServer](https://github.com/qinguoyi/TinyWebServer) 项目
+
+* 前端汉字转拼音使用了 [汉字转拼音](https://github.com/wudi98/wudi_hanzi2pinyin)
 
 ## 环境要求
 * Linux
