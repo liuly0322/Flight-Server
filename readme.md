@@ -2,13 +2,14 @@
 
 ## 版权说明
 
-* 基于 [TinyWebServer](https://github.com/qinguoyi/TinyWebServer) 项目
+- 基于 [TinyWebServer](https://github.com/qinguoyi/TinyWebServer) 项目
 
-* 前端汉字转拼音使用了 [汉字转拼音](https://github.com/wudi98/wudi_hanzi2pinyin)
+- 前端汉字转拼音使用了 [汉字转拼音](https://github.com/wudi98/wudi_hanzi2pinyin)
 
 ## 环境要求
-* Linux
-* C++14
+
+- Linux
+- C++14
 
 ## 功能说明
 
@@ -45,32 +46,33 @@
 否则：
 
 - state == 1 则请求注册
-    需求参数：username,password
-    返回值：true/false （用户名被占用）
+  需求参数：username,password
+  返回值：true/false （用户名被占用）
 
 - state == 2 则请求登录
-    需求参数：username,password
-    返回值：true/false （是否账户密码匹配）
+  需求参数：username,password
+  返回值：true/false （是否账户密码匹配）
 
 - state == 3 则获取自己记录
-    需求参数：username,password
-    返回值：每一行都是订票的信息，包含id，是否完成，以及航班信息
+  需求参数：username,password
+  返回值：每一行都是订票的信息，包含 id，是否完成，以及航班信息
 
 - state == 4 则进行订票
-    需求参数：username,password,flight,grade,num
-    返回值：成功或失败
+  需求参数：username,password,flight,grade,num
+  返回值：成功或失败
 
 - state == 5 则强制订票
-    需求参数：username,password,flight,grade,num
-    返回值：无所谓，订完票直接刷新界面
+  需求参数：username,password,flight,grade,num
+  返回值：无所谓，订完票直接刷新界面
 
 - state == 6 则退票
-    需求参数：username,password,id
-    返回值：同上
+  需求参数：username,password,id
+  返回值：同上
 
-此外，POST还需要能够根据 admin 账户的需要，保存订票状态，这里参数admin="password"写死就可以了
+此外，POST 还需要能够根据 admin 账户的需要，保存订票状态，这里参数 admin="password"写死就可以了
 
 ## 目录树
+
 ```
 .
 ├── bin             // 程序
@@ -89,6 +91,9 @@
 │   ├── server
 │   ├── ticket      // 订票系统
 │   └── timer
+├── data            // 航班数据
+│   ├── flights.txt
+│   └── users.txt
 ├── front-end       // 前端界面
 │   ├── axios.min.js
 │   ├── index.html
