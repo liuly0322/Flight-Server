@@ -14,5 +14,4 @@
 /.vscode
 code/.vscode/settings.json
 
-/data/*.txt
 /code/test
